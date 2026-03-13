@@ -8,10 +8,8 @@ const WORDS_EN = [
 ]
 
 const WORDS_ES = [
-  'empresa', 'catedral', 'espátula', 'gaucho', 'veraneo',
-  'Uruguay', 'enjuiciar', 'aproximar', 'ahuecar', 'brújula',
-  'suavecito', 'asfixiar', 'feo', 'fantástico', 'horchata',
-  'recreo', 'oído', 'peleen', 'terapéutico', 'aguafiestas',
+  'empresa', 'catedral', 'veraneo', 'Uruguay', 'aproximar',
+  'suavecito', 'feo', 'fantástico', 'recreo', 'oído',
 ]
 
 const UI = {
@@ -240,7 +238,7 @@ export default function App() {
           <h1>{t.title}</h1>
           <p className="subtitle">{t.subtitle}</p>
           <div className="stats-grid">
-            <ScorePill label={t.practiceWords} value="20" />
+            <ScorePill label={t.practiceWords} value={WORDS.length} />
             <ScorePill label={t.triesPerWord} value="2" />
           </div>
           <div className="tip-box">
