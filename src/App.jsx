@@ -1,11 +1,87 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-const WORDS = [
+const WORDS_EN = [
   'airplane', 'daytime', 'birthday', 'daylight', 'hairdo',
   'somebody', 'birdhouse', 'barefoot', 'headlight', 'sometime',
   'someone', 'newspaper', 'sidewalks', 'basketball', 'stagecoach',
   'placed', 'office', 'giant', 'handwriting', 'windshield',
 ]
+
+const WORDS_ES = [
+  'avión', 'cumpleaños', 'mariposa', 'biblioteca', 'computadora',
+  'dinosaurio', 'elefante', 'farmacia', 'girasol', 'helicóptero',
+  'iglesia', 'jardín', 'kilómetro', 'lámpara', 'montaña',
+  'naranja', 'océano', 'paraguas', 'queso', 'rápido',
+]
+
+const UI = {
+  en: {
+    langToggle: '🇪🇸 Español',
+    title: 'Spelling Practice',
+    subtitle: 'A simple mobile-friendly game to help your son practice for his spelling test.',
+    practiceWords: 'Practice words',
+    triesPerWord: 'Tries per word',
+    tipBox: (hearWord, check) => <>Tap <strong>{hearWord}</strong>, type the spelling, and press <strong>{check}</strong>. At the end, he can review missed words and hear them again.</>,
+    startPractice: 'Start Practice',
+    greatWork: 'Great Work!',
+    practiceCompleted: 'Practice round completed.',
+    correct: 'Correct',
+    accuracy: 'Accuracy',
+    wordsToReview: 'Words to review',
+    noneAllRight: 'None. He got them all right.',
+    playAgain: 'Play Again',
+    sameOrder: 'Same Order',
+    wordOf: (i, total) => `Word ${i} of ${total}`,
+    spellWhatYouHear: 'Spell what you hear',
+    score: 'Score',
+    listen: 'Listen',
+    hearWord: 'Hear Word',
+    reveal: 'Reveal',
+    typeSpelling: 'Type the spelling',
+    placeholder: 'Type the word here',
+    check: 'Check',
+    clear: 'Clear',
+    correctFeedback: 'Correct! Nice job.',
+    incorrectFeedback: (word) => `Not quite. The correct spelling is ${word}.`,
+    retryFeedback: 'Try again. Tap hear word and listen closely.',
+    triesFirst: 'You get 2 tries for each word.',
+    triesCount: (n) => `Try ${n} of 2`,
+    lang: 'en-US',
+  },
+  es: {
+    langToggle: '🇺🇸 English',
+    title: 'Práctica de Ortografía',
+    subtitle: 'Un juego móvil sencillo para ayudar a tu hijo a practicar su prueba de ortografía.',
+    practiceWords: 'Palabras',
+    triesPerWord: 'Intentos',
+    tipBox: (hearWord, check) => <>Toca <strong>{hearWord}</strong>, escribe la palabra y presiona <strong>{check}</strong>. Al final, puede repasar las palabras que se le escaparon.</>,
+    startPractice: 'Comenzar',
+    greatWork: '¡Muy Bien!',
+    practiceCompleted: 'Ronda de práctica completada.',
+    correct: 'Correctas',
+    accuracy: 'Precisión',
+    wordsToReview: 'Palabras para repasar',
+    noneAllRight: 'Ninguna. ¡Las acertó todas!',
+    playAgain: 'Jugar de Nuevo',
+    sameOrder: 'Mismo Orden',
+    wordOf: (i, total) => `Palabra ${i} de ${total}`,
+    spellWhatYouHear: 'Escribe lo que escuchas',
+    score: 'Puntos',
+    listen: 'Escucha',
+    hearWord: 'Escuchar',
+    reveal: 'Revelar',
+    typeSpelling: 'Escribe la palabra',
+    placeholder: 'Escribe la palabra aquí',
+    check: 'Verificar',
+    clear: 'Borrar',
+    correctFeedback: '¡Correcto! Muy bien.',
+    incorrectFeedback: (word) => `No es correcto. La ortografía correcta es ${word}.`,
+    retryFeedback: 'Intenta de nuevo. Toca escuchar y presta atención.',
+    triesFirst: 'Tienes 2 intentos por palabra.',
+    triesCount: (n) => `Intento ${n} de 2`,
+    lang: 'es-ES',
+  },
+}
 
 function shuffleArray(arr) {
   const copy = [...arr]
@@ -21,15 +97,15 @@ function normalize(value) {
 }
 
 function maskedWord(word) {
-  return word.replace(/[a-z]/gi, '_')
+  return word.replace(/[\p{L}]/gu, '_')
 }
 
-function speak(text) {
+function speak(text, lang) {
   if (typeof window === 'undefined' || !window.speechSynthesis) return
   const utterance = new SpeechSynthesisUtterance(text)
   utterance.rate = 0.78
   utterance.pitch = 1
-  utterance.lang = 'en-US'
+  utterance.lang = lang
   window.speechSynthesis.cancel()
   window.speechSynthesis.speak(utterance)
 }
@@ -44,7 +120,11 @@ function ScorePill({ label, value }) {
 }
 
 export default function App() {
-  const [order, setOrder] = useState(() => shuffleArray(WORDS))
+  const [locale, setLocale] = useState('en')
+  const t = UI[locale]
+  const WORDS = locale === 'en' ? WORDS_EN : WORDS_ES
+
+  const [order, setOrder] = useState(() => shuffleArray(WORDS_EN))
   const [started, setStarted] = useState(false)
   const [index, setIndex] = useState(0)
   const [answer, setAnswer] = useState('')
@@ -69,8 +149,25 @@ export default function App() {
   }, [started, finished, index])
 
   useEffect(() => {
-    if (started && !finished && currentWord) speak(currentWord)
+    if (started && !finished && currentWord) speak(currentWord, t.lang)
   }, [started, finished, currentWord])
+
+  function toggleLocale() {
+    const next = locale === 'en' ? 'es' : 'en'
+    setLocale(next)
+    if (started) {
+      const nextWords = next === 'en' ? WORDS_EN : WORDS_ES
+      setOrder(shuffleArray(nextWords))
+      setStarted(false)
+      setIndex(0)
+      setAnswer('')
+      setScore(0)
+      setTries(0)
+      setFeedback(null)
+      setShowWord(false)
+      setResults([])
+    }
+  }
 
   function startGame(shuffle = true) {
     setOrder(shuffle ? shuffleArray(WORDS) : [...WORDS])
@@ -100,7 +197,7 @@ export default function App() {
 
     if (clean === normalize(currentWord)) {
       setScore((prev) => prev + 1)
-      setFeedback({ type: 'correct', text: 'Correct! Nice job.' })
+      setFeedback({ type: 'correct', text: t.correctFeedback })
       setTimeout(() => {
         advanceRound({ word: currentWord, correct: true, userAnswer: clean })
       }, 800)
@@ -112,13 +209,13 @@ export default function App() {
 
     if (nextTry >= 2) {
       setShowWord(true)
-      setFeedback({ type: 'incorrect', text: `Not quite. The correct spelling is ${currentWord}.` })
+      setFeedback({ type: 'incorrect', text: t.incorrectFeedback(currentWord) })
       setTimeout(() => {
         advanceRound({ word: currentWord, correct: false, userAnswer: clean })
       }, 1600)
     } else {
-      setFeedback({ type: 'retry', text: 'Try again. Tap hear word and listen closely.' })
-      setTimeout(() => speak(currentWord), 200)
+      setFeedback({ type: 'retry', text: t.retryFeedback })
+      setTimeout(() => speak(currentWord, t.lang), 200)
     }
   }
 
@@ -129,47 +226,54 @@ export default function App() {
     }
   }
 
+  const LangToggle = () => (
+    <button className="lang-toggle" onClick={toggleLocale}>{t.langToggle}</button>
+  )
+
+  // --- INTRO SCREEN ---
   if (!started) {
     return (
       <div className="page-shell">
         <div className="app-card intro-card">
+          <LangToggle />
           <div className="icon-badge">✏️</div>
-          <h1>Spelling Practice</h1>
-          <p className="subtitle">A simple mobile-friendly game to help your son practice for his spelling test.</p>
+          <h1>{t.title}</h1>
+          <p className="subtitle">{t.subtitle}</p>
           <div className="stats-grid">
-            <ScorePill label="Practice words" value="20" />
-            <ScorePill label="Tries per word" value="2" />
+            <ScorePill label={t.practiceWords} value="20" />
+            <ScorePill label={t.triesPerWord} value="2" />
           </div>
           <div className="tip-box">
-            Tap <strong>Hear Word</strong>, type the spelling, and press <strong>Check</strong>. At the end, he can review missed words and hear them again.
+            {t.tipBox(t.hearWord, t.check)}
           </div>
-          <button className="primary-button" onClick={() => startGame(true)}>Start Practice</button>
+          <button className="primary-button" onClick={() => startGame(true)}>{t.startPractice}</button>
         </div>
       </div>
     )
   }
 
+  // --- FINISH SCREEN ---
   if (finished) {
     return (
       <div className="page-shell">
         <div className="app-card finish-card">
           <div className="finish-banner">
             <div className="icon-badge dark">🏆</div>
-            <h1>Great Work!</h1>
-            <p>Practice round completed.</p>
+            <h1>{t.greatWork}</h1>
+            <p>{t.practiceCompleted}</p>
           </div>
           <div className="stats-grid">
-            <ScorePill label="Correct" value={`${score}/${order.length}`} />
-            <ScorePill label="Accuracy" value={`${accuracy}%`} />
+            <ScorePill label={t.correct} value={`${score}/${order.length}`} />
+            <ScorePill label={t.accuracy} value={`${accuracy}%`} />
           </div>
           <div className="review-box">
-            <div className="review-title">Words to review</div>
+            <div className="review-title">{t.wordsToReview}</div>
             {missedWords.length === 0 ? (
-              <div className="review-empty">None. He got them all right.</div>
+              <div className="review-empty">{t.noneAllRight}</div>
             ) : (
               <div className="chip-wrap">
                 {missedWords.map((item) => (
-                  <button key={item.word} className="word-chip" onClick={() => speak(item.word)}>
+                  <button key={item.word} className="word-chip" onClick={() => speak(item.word, t.lang)}>
                     {item.word}
                   </button>
                 ))}
@@ -177,52 +281,53 @@ export default function App() {
             )}
           </div>
           <div className="button-row">
-            <button className="primary-button" onClick={() => startGame(true)}>Play Again</button>
-            <button className="secondary-button" onClick={() => startGame(false)}>Same Order</button>
+            <button className="primary-button" onClick={() => startGame(true)}>{t.playAgain}</button>
+            <button className="secondary-button" onClick={() => startGame(false)}>{t.sameOrder}</button>
           </div>
         </div>
       </div>
     )
   }
 
+  // --- GAME ROUND SCREEN ---
   return (
     <div className="page-shell">
       <div className="top-bar">
         <div>
-          <div className="eyebrow">Word {index + 1} of {order.length}</div>
-          <div className="screen-title">Spell what you hear</div>
+          <div className="eyebrow">{t.wordOf(index + 1, order.length)}</div>
+          <div className="screen-title">{t.spellWhatYouHear}</div>
         </div>
-        <ScorePill label="Score" value={score} />
+        <ScorePill label={t.score} value={score} />
       </div>
       <div className="progress-track">
         <div className="progress-fill" style={{ width: `${progress}%` }} />
       </div>
       <div className="app-card round-card">
         <div className="listen-panel">
-          <div className="listen-label">Listen</div>
+          <div className="listen-label">{t.listen}</div>
           <div className="masked-word">{showWord ? currentWord : maskedWord(currentWord)}</div>
           <div className="button-row compact">
-            <button className="primary-button" onClick={() => speak(currentWord)}>Hear Word</button>
-            <button className="ghost-button" onClick={() => setShowWord(true)}>Reveal</button>
+            <button className="primary-button" onClick={() => speak(currentWord, t.lang)}>{t.hearWord}</button>
+            <button className="ghost-button" onClick={() => setShowWord(true)}>{t.reveal}</button>
           </div>
         </div>
         <div className="field-block">
-          <label htmlFor="spelling-input">Type the spelling</label>
+          <label htmlFor="spelling-input">{t.typeSpelling}</label>
           <input
             id="spelling-input"
             ref={inputRef}
             value={answer}
             onChange={(event) => setAnswer(event.target.value)}
             onKeyDown={onKeyDown}
-            placeholder="Type the word here"
+            placeholder={t.placeholder}
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck={false}
           />
         </div>
         <div className="button-row">
-          <button className="primary-button" onClick={submitAnswer}>Check</button>
-          <button className="secondary-button" onClick={() => setAnswer('')}>Clear</button>
+          <button className="primary-button" onClick={submitAnswer}>{t.check}</button>
+          <button className="secondary-button" onClick={() => setAnswer('')}>{t.clear}</button>
         </div>
         {feedback && (
           <div className={`feedback ${feedback.type}`}>
@@ -230,7 +335,7 @@ export default function App() {
           </div>
         )}
         <div className="tries-text">
-          {tries === 0 ? 'You get 2 tries for each word.' : `Try ${tries + 1} of 2`}
+          {tries === 0 ? t.triesFirst : t.triesCount(tries + 1)}
         </div>
       </div>
     </div>
