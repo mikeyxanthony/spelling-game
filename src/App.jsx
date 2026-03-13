@@ -34,7 +34,6 @@ const UI = {
     score: '⭐ Score',
     listen: '🔊 Listen',
     hearWord: '🔊 Hear Word',
-    reveal: '👀 Reveal',
     typeSpelling: '✍️ Type the Spelling',
     placeholder: 'Type the word here...',
     check: '✅ Check',
@@ -67,7 +66,6 @@ const UI = {
     score: '⭐ Puntos',
     listen: '🔊 Escucha',
     hearWord: '🔊 Escuchar',
-    reveal: '👀 Revelar',
     typeSpelling: '✍️ Escribe la Palabra',
     placeholder: 'Escribe la palabra aquí...',
     check: '✅ Verificar',
@@ -129,7 +127,6 @@ export default function App() {
   const [score, setScore] = useState(0)
   const [tries, setTries] = useState(0)
   const [feedback, setFeedback] = useState(null)
-  const [showWord, setShowWord] = useState(false)
   const [results, setResults] = useState([])
   const inputRef = useRef(null)
 
@@ -161,7 +158,6 @@ export default function App() {
     setScore(0)
     setTries(0)
     setFeedback(null)
-    setShowWord(false)
     setResults([])
   }
 
@@ -173,7 +169,6 @@ export default function App() {
     setScore(0)
     setTries(0)
     setFeedback(null)
-    setShowWord(false)
     setResults([])
   }
 
@@ -183,7 +178,6 @@ export default function App() {
     setAnswer('')
     setTries(0)
     setFeedback(null)
-    setShowWord(false)
   }
 
   function submitAnswer() {
@@ -204,7 +198,6 @@ export default function App() {
     setTries(nextTry)
 
     if (nextTry >= 2) {
-      setShowWord(true)
       setFeedback({ type: 'incorrect', text: t.incorrectFeedback(currentWord) })
       setTimeout(() => {
         advanceRound({ word: currentWord, correct: false, userAnswer: clean })
@@ -301,11 +294,8 @@ export default function App() {
       <div className="app-card round-card">
         <div className="listen-panel">
           <div className="listen-label">{t.listen}</div>
-          <div className="masked-word">{showWord ? currentWord : maskedWord(currentWord)}</div>
-          <div className="button-row compact">
-            <button className="primary-button" onClick={() => speak(currentWord, t.lang)}>{t.hearWord}</button>
-            <button className="ghost-button" onClick={() => setShowWord(true)}>{t.reveal}</button>
-          </div>
+          <div className="masked-word">{maskedWord(currentWord)}</div>
+          <button className="primary-button" onClick={() => speak(currentWord, t.lang)}>{t.hearWord}</button>
         </div>
         <div className="field-block">
           <label htmlFor="spelling-input">{t.typeSpelling}</label>
