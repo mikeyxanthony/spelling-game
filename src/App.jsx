@@ -8,76 +8,74 @@ const WORDS_EN = [
 ]
 
 const WORDS_ES = [
-  'empresa', 'catedral', 'espátula', 'gaucho', 'veraneo',
-  'Uruguay', 'enjuiciar', 'aproximar', 'ahuecar', 'brújula',
-  'suavecito', 'asfixiar', 'feo', 'fantástico', 'horchata',
-  'recreo', 'oído', 'peleen', 'terapéutico', 'aguafiestas',
+  'empresa', 'catedral', 'veraneo', 'Uruguay', 'aproximar',
+  'suavecito', 'feo', 'fantástico', 'recreo', 'oído',
 ]
 
 const UI = {
   en: {
     langToggle: '🇪🇸 Español',
-    title: '✏️ Spelling Practice',
-    subtitle: 'A fun game to help your son practice for his spelling test!',
-    practiceWords: '📚 Practice Words',
-    triesPerWord: '🎯 Tries Per Word',
+    title: 'Spelling Practice',
+    subtitle: 'A simple mobile-friendly game to help your son practice for his spelling test.',
+    practiceWords: 'Practice words',
+    triesPerWord: 'Tries per word',
     tipBox: (hearWord, check) => <>Tap <strong>{hearWord}</strong>, type the spelling, and press <strong>{check}</strong>. At the end, he can review missed words and hear them again.</>,
-    startPractice: '📝 Start Practice',
-    greatWork: '🎉 Great Work!',
-    practiceCompleted: 'Practice round completed!',
-    correct: '✅ Correct',
-    accuracy: '🎯 Accuracy',
-    wordsToReview: '📖 Words to Review',
-    noneAllRight: '🌟 None — he got them all right!',
-    playAgain: '🔄 Play Again',
-    sameOrder: '📋 Same Order',
+    startPractice: 'Start Practice',
+    greatWork: 'Great Work!',
+    practiceCompleted: 'Practice round completed.',
+    correct: 'Correct',
+    accuracy: 'Accuracy',
+    wordsToReview: 'Words to review',
+    noneAllRight: 'None. He got them all right.',
+    playAgain: 'Play Again',
+    sameOrder: 'Same Order',
     wordOf: (i, total) => `Word ${i} of ${total}`,
-    spellWhatYouHear: '👂 Spell What You Hear',
-    score: '⭐ Score',
-    listen: '🔊 Listen',
-    hearWord: '🔊 Hear Word',
-    reveal: '👀 Reveal',
-    typeSpelling: '✍️ Type the Spelling',
-    placeholder: 'Type the word here...',
-    check: '✅ Check',
-    clear: '🗑️ Clear',
-    correctFeedback: '✅ Correct! Nice job! 🌟',
-    incorrectFeedback: (word) => `❌ Not quite. The correct spelling is "${word}".`,
-    retryFeedback: '🔄 Try again! Tap Hear Word and listen closely. 👂',
-    triesFirst: '🎯 You get 2 tries for each word.',
+    spellWhatYouHear: 'Spell what you hear',
+    score: 'Score',
+    listen: 'Listen',
+    hearWord: 'Hear Word',
+    reveal: 'Reveal',
+    typeSpelling: 'Type the spelling',
+    placeholder: 'Type the word here',
+    check: 'Check',
+    clear: 'Clear',
+    correctFeedback: 'Correct! Nice job.',
+    incorrectFeedback: (word) => `Not quite. The correct spelling is ${word}.`,
+    retryFeedback: 'Try again. Tap hear word and listen closely.',
+    triesFirst: 'You get 2 tries for each word.',
     triesCount: (n) => `Try ${n} of 2`,
     lang: 'en-US',
   },
   es: {
     langToggle: '🇺🇸 English',
-    title: '✏️ Práctica de Ortografía',
-    subtitle: '¡Un juego divertido para ayudar a tu hijo a practicar ortografía!',
-    practiceWords: '📚 Palabras',
-    triesPerWord: '🎯 Intentos',
+    title: 'Práctica de Ortografía',
+    subtitle: 'Un juego móvil sencillo para ayudar a tu hijo a practicar su prueba de ortografía.',
+    practiceWords: 'Palabras',
+    triesPerWord: 'Intentos',
     tipBox: (hearWord, check) => <>Toca <strong>{hearWord}</strong>, escribe la palabra y presiona <strong>{check}</strong>. Al final, puede repasar las palabras que se le escaparon.</>,
-    startPractice: '📝 Comenzar',
-    greatWork: '🎉 ¡Muy Bien!',
-    practiceCompleted: '¡Ronda de práctica completada!',
-    correct: '✅ Correctas',
-    accuracy: '🎯 Precisión',
-    wordsToReview: '📖 Palabras para Repasar',
-    noneAllRight: '🌟 ¡Ninguna — las acertó todas!',
-    playAgain: '🔄 Jugar de Nuevo',
-    sameOrder: '📋 Mismo Orden',
+    startPractice: 'Comenzar',
+    greatWork: '¡Muy Bien!',
+    practiceCompleted: 'Ronda de práctica completada.',
+    correct: 'Correctas',
+    accuracy: 'Precisión',
+    wordsToReview: 'Palabras para repasar',
+    noneAllRight: 'Ninguna. ¡Las acertó todas!',
+    playAgain: 'Jugar de Nuevo',
+    sameOrder: 'Mismo Orden',
     wordOf: (i, total) => `Palabra ${i} de ${total}`,
-    spellWhatYouHear: '👂 Escribe lo que Escuchas',
-    score: '⭐ Puntos',
-    listen: '🔊 Escucha',
-    hearWord: '🔊 Escuchar',
-    reveal: '👀 Revelar',
-    typeSpelling: '✍️ Escribe la Palabra',
-    placeholder: 'Escribe la palabra aquí...',
-    check: '✅ Verificar',
-    clear: '🗑️ Borrar',
-    correctFeedback: '✅ ¡Correcto! ¡Muy bien! 🌟',
-    incorrectFeedback: (word) => `❌ No es correcto. La ortografía correcta es "${word}".`,
-    retryFeedback: '🔄 ¡Intenta de nuevo! Toca escuchar y presta atención. 👂',
-    triesFirst: '🎯 Tienes 2 intentos por palabra.',
+    spellWhatYouHear: 'Escribe lo que escuchas',
+    score: 'Puntos',
+    listen: 'Escucha',
+    hearWord: 'Escuchar',
+    reveal: 'Revelar',
+    typeSpelling: 'Escribe la palabra',
+    placeholder: 'Escribe la palabra aquí',
+    check: 'Verificar',
+    clear: 'Borrar',
+    correctFeedback: '¡Correcto! Muy bien.',
+    incorrectFeedback: (word) => `No es correcto. La ortografía correcta es ${word}.`,
+    retryFeedback: 'Intenta de nuevo. Toca escuchar y presta atención.',
+    triesFirst: 'Tienes 2 intentos por palabra.',
     triesCount: (n) => `Intento ${n} de 2`,
     lang: 'es-ES',
   },
@@ -100,7 +98,70 @@ function maskedWord(word) {
   return word.replace(/[\p{L}]/gu, '_')
 }
 
-function speak(text, lang) {
+// ---------------------------------------------------------------------------
+// TTS — ElevenLabs via proxy, with localStorage cache + Web Speech fallback
+// ---------------------------------------------------------------------------
+
+const CACHE_PREFIX = 'tts_v1_'
+const QUOTA_FLAG_KEY = 'tts_quota_exceeded'
+
+function getCacheKey(word, lang) {
+  return CACHE_PREFIX + lang + '_' + word.toLowerCase()
+}
+
+function isCacheFresh(entry) {
+  // Cache entries expire after 30 days
+  return entry && Date.now() - entry.ts < 30 * 24 * 60 * 60 * 1000
+}
+
+function readCache(word, lang) {
+  try {
+    const raw = localStorage.getItem(getCacheKey(word, lang))
+    if (!raw) return null
+    const entry = JSON.parse(raw)
+    if (!isCacheFresh(entry)) {
+      localStorage.removeItem(getCacheKey(word, lang))
+      return null
+    }
+    return entry.dataUrl
+  } catch {
+    return null
+  }
+}
+
+function writeCache(word, lang, dataUrl) {
+  try {
+    localStorage.setItem(getCacheKey(word, lang), JSON.stringify({ dataUrl, ts: Date.now() }))
+  } catch {
+    // localStorage full — silently ignore
+  }
+}
+
+function isQuotaExceeded() {
+  try {
+    const raw = localStorage.getItem(QUOTA_FLAG_KEY)
+    if (!raw) return false
+    const { until } = JSON.parse(raw)
+    // Auto-reset quota flag on the 1st of each month
+    const now = new Date()
+    const resetDate = new Date(now.getFullYear(), now.getMonth(), 1).getTime()
+    if (Date.now() > resetDate && until < resetDate) {
+      localStorage.removeItem(QUOTA_FLAG_KEY)
+      return false
+    }
+    return true
+  } catch {
+    return false
+  }
+}
+
+function markQuotaExceeded() {
+  try {
+    localStorage.setItem(QUOTA_FLAG_KEY, JSON.stringify({ until: Date.now() }))
+  } catch {}
+}
+
+function speakFallback(text, lang) {
   if (typeof window === 'undefined' || !window.speechSynthesis) return
   const utterance = new SpeechSynthesisUtterance(text)
   utterance.rate = 0.78
@@ -109,6 +170,61 @@ function speak(text, lang) {
   window.speechSynthesis.cancel()
   window.speechSynthesis.speak(utterance)
 }
+
+async function speak(text, lang) {
+  if (typeof window === 'undefined') return
+
+  // 1. Check quota flag — use fallback immediately if quota exceeded
+  if (isQuotaExceeded()) {
+    speakFallback(text, lang)
+    return
+  }
+
+  // 2. Check localStorage cache
+  const cached = readCache(text, lang)
+  if (cached) {
+    const audio = new Audio(cached)
+    audio.play().catch(() => speakFallback(text, lang))
+    return
+  }
+
+  // 3. Fetch from proxy
+  try {
+    const res = await fetch('/api/speak', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ word: text, lang }),
+    })
+
+    if (res.status === 429) {
+      // Quota exceeded — mark it and fall back
+      markQuotaExceeded()
+      speakFallback(text, lang)
+      return
+    }
+
+    if (!res.ok) {
+      // Any other error — fall back silently
+      speakFallback(text, lang)
+      return
+    }
+
+    // Convert to base64 data URL and cache it
+    const arrayBuffer = await res.arrayBuffer()
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
+    const dataUrl = `data:audio/mpeg;base64,${base64}`
+
+    writeCache(text, lang, dataUrl)
+
+    const audio = new Audio(dataUrl)
+    audio.play().catch(() => speakFallback(text, lang))
+  } catch {
+    // Network error — fall back
+    speakFallback(text, lang)
+  }
+}
+
+// ---------------------------------------------------------------------------
 
 function ScorePill({ label, value }) {
   return (
@@ -236,11 +352,11 @@ export default function App() {
       <div className="page-shell">
         <div className="app-card intro-card">
           <LangToggle />
-          <div className="icon-badge">🌟</div>
+          <div className="icon-badge">✏️</div>
           <h1>{t.title}</h1>
           <p className="subtitle">{t.subtitle}</p>
           <div className="stats-grid">
-            <ScorePill label={t.practiceWords} value="20" />
+            <ScorePill label={t.practiceWords} value={WORDS.length} />
             <ScorePill label={t.triesPerWord} value="2" />
           </div>
           <div className="tip-box">
