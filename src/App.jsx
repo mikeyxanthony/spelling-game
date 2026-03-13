@@ -8,10 +8,10 @@ const WORDS_EN = [
 ]
 
 const WORDS_ES = [
-  'empresa', 'catedral', 'espátula', 'máquina', 'jabón',
-  'feliz', 'café', 'lápiz', 'examen', 'diez',
-  'mujer', 'teléfono', 'matemáticas', 'corazón', 'fantástico',
-  'habitación', 'música', 'interesante', 'fácil', 'difícil',
+  'avión', 'cumpleaños', 'mariposa', 'biblioteca', 'computadora',
+  'dinosaurio', 'elefante', 'farmacia', 'girasol', 'helicóptero',
+  'iglesia', 'jardín', 'kilómetro', 'lámpara', 'montaña',
+  'naranja', 'océano', 'paraguas', 'queso', 'rápido',
 ]
 
 const UI = {
