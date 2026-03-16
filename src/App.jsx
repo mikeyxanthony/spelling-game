@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import VocabBuilder from './VocabBuilder.jsx'
 
 const WORDS_EN = [
   'airplane', 'daytime', 'birthday', 'daylight', 'hairdo',
@@ -115,7 +116,35 @@ function ScorePill({ label, value }) {
   )
 }
 
+// ── Home / Mode-selection screen ─────────────────────────────────────────────
+function HomeScreen({ onSelectSpelling, onSelectVocab }) {
+  return (
+    <div className="page-shell">
+      <div className="app-card home-card">
+        <div className="icon-badge">🎓</div>
+        <h1>Word Workshop</h1>
+        <p className="subtitle">Choose an activity to get started!</p>
+        <div className="mode-grid">
+          <button className="mode-tile" onClick={onSelectSpelling}>
+            <span className="mode-tile-icon">✏️</span>
+            <span className="mode-tile-title">Spelling Practice</span>
+            <span className="mode-tile-desc">Hear the word and spell it correctly</span>
+          </button>
+          <button className="mode-tile" onClick={onSelectVocab}>
+            <span className="mode-tile-icon">📖</span>
+            <span className="mode-tile-title">Vocabulary Builder</span>
+            <span className="mode-tile-desc">Learn what the words mean</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
+  // top-level mode: 'home' | 'spelling' | 'vocab'
+  const [mode, setMode] = useState('home')
+
   const [locale, setLocale] = useState('en')
   const t = UI[locale]
   const WORDS = locale === 'en' ? WORDS_EN : WORDS_ES
@@ -146,6 +175,17 @@ export default function App() {
   useEffect(() => {
     if (started && !finished && currentWord) speak(currentWord, t.lang)
   }, [started, finished, currentWord])
+
+  function goHome() {
+    setMode('home')
+    setStarted(false)
+    setIndex(0)
+    setAnswer('')
+    setScore(0)
+    setTries(0)
+    setFeedback(null)
+    setResults([])
+  }
 
   function toggleLocale() {
     const next = locale === 'en' ? 'es' : 'en'
@@ -219,11 +259,29 @@ export default function App() {
     <button className="lang-toggle" onClick={toggleLocale}>{t.langToggle}</button>
   )
 
+  // ── HOME SCREEN ──────────────────────────────────────────────────────────
+  if (mode === 'home') {
+    return (
+      <HomeScreen
+        onSelectSpelling={() => setMode('spelling')}
+        onSelectVocab={() => setMode('vocab')}
+      />
+    )
+  }
+
+  // ── VOCAB MODE ───────────────────────────────────────────────────────────
+  if (mode === 'vocab') {
+    return <VocabBuilder onBack={goHome} />
+  }
+
+  // ── SPELLING MODE ────────────────────────────────────────────────────────
+
   // --- INTRO SCREEN ---
   if (!started) {
     return (
       <div className="page-shell">
         <div className="app-card intro-card">
+          <button className="back-btn" onClick={goHome}>← Home</button>
           <LangToggle />
           <div className="icon-badge">🌟</div>
           <h1>{t.title}</h1>
@@ -273,6 +331,7 @@ export default function App() {
             <button className="primary-button" onClick={() => startGame(true)}>{t.playAgain}</button>
             <button className="secondary-button" onClick={() => startGame(false)}>{t.sameOrder}</button>
           </div>
+          <button className="back-btn" style={{ marginTop: '14px' }} onClick={goHome}>← Home</button>
         </div>
       </div>
     )
