@@ -2,15 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import VocabBuilder from './VocabBuilder.jsx'
 
 const WORDS_EN = [
-  'airplane', 'daytime', 'birthday', 'daylight', 'hairdo',
-  'somebody', 'birdhouse', 'barefoot', 'headlight', 'sometime',
-  'someone', 'newspaper', 'sidewalks', 'basketball', 'stagecoach',
-  'placed', 'office', 'giant', 'handwriting', 'windshield',
+  'Citizenship', 'Continued', 'Daring', 'Horrified', 'Participate',
+  'Proposed', 'Unfairness', 'Waver',
 ]
 
 const WORDS_ES = [
-  'empresa', 'catedral', 'verano', 'Uruguay', 'aproximar',
-  'suavecito', 'feo', 'fantástico', 'recreo', 'oído',
+  'Antepasado', 'Arder', 'Envejecer', 'Oficio', 'Oxidado',
+  'Reciclar', 'Serrar',
 ]
 
 const UI = {

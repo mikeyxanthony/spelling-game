@@ -1,27 +1,26 @@
 import { useEffect, useRef, useState } from 'react'
 
-// ── Vocabulary word list with kid-friendly definitions ────────────────────────
-export const VOCAB = [
-  { word: 'airplane',    def: 'A large flying machine with wings and engines that carries people through the sky.' },
-  { word: 'daytime',     def: 'The part of the day when the sun is up and it is light outside.' },
-  { word: 'birthday',    def: 'The special day each year that marks the day you were born.' },
-  { word: 'daylight',    def: 'The natural light that comes from the sun during the day.' },
-  { word: 'hairdo',      def: 'The way someone styles or arranges the hair on their head.' },
-  { word: 'somebody',    def: 'A person; used when you do not know exactly who the person is.' },
-  { word: 'birdhouse',   def: 'A small wooden box put outside for birds to live and build their nests in.' },
-  { word: 'barefoot',    def: 'Walking or standing without any shoes or socks on your feet.' },
-  { word: 'headlight',   def: 'A bright light on the front of a car or bike that helps you see in the dark.' },
-  { word: 'sometime',    def: 'At some point in the future or the past, but not at a specific time.' },
-  { word: 'someone',     def: 'A person; used when you are not saying exactly which person.' },
-  { word: 'newspaper',   def: 'Large folded sheets of paper printed with news, stories, and pictures.' },
-  { word: 'sidewalks',   def: 'Paved paths along the side of a street where people walk safely.' },
-  { word: 'basketball',  def: 'A sport where two teams try to throw an orange ball through a high hoop.' },
-  { word: 'stagecoach',  def: 'An old horse-drawn carriage that carried passengers and mail across long distances.' },
-  { word: 'placed',      def: 'Put something carefully in a particular spot or position.' },
-  { word: 'office',      def: 'A room or building where people sit at desks and do their work.' },
-  { word: 'giant',       def: 'Something or someone that is much bigger than normal size.' },
-  { word: 'handwriting', def: 'Words or letters written by hand with a pen or pencil, not typed.' },
-  { word: 'windshield',  def: 'The large glass window at the front of a car that protects passengers from wind.' },
+// ── English vocabulary word list ──────────────────────────────────────────────
+export const VOCAB_EN = [
+  { word: 'Citizenship',  def: 'The position of being a citizen of a country with all of the rights that come with it.' },
+  { word: 'Continued',    def: 'Goes on without stopping.' },
+  { word: 'Daring',       def: 'Courageous and bold.' },
+  { word: 'Horrified',    def: 'Filled with great fear, horror, and dislike.' },
+  { word: 'Participate',  def: 'Join with others or take part in something.' },
+  { word: 'Proposed',     def: 'Suggested something to others for consideration.' },
+  { word: 'Unfairness',   def: 'State of being unfair or unjust.' },
+  { word: 'Waver',        def: 'To pause when being unsure.' },
+]
+
+// ── Spanish vocabulary word list (Unidad 5 Semana 2) ─────────────────────────
+export const VOCAB_ES = [
+  { word: 'Antepasado', def: 'Persona de la que descendemos.' },
+  { word: 'Arder',      def: 'Prenderse fuego.' },
+  { word: 'Envejecer',  def: 'Volverse más viejo.' },
+  { word: 'Oficio',     def: 'Trabajo que requiere habilidades manuales.' },
+  { word: 'Oxidado',    def: 'Transformado por acción del oxígeno.' },
+  { word: 'Reciclar',   def: 'Procesar un material para usarlo nuevamente.' },
+  { word: 'Serrar',     def: 'Cortar algo con una sierra.' },
 ]
 
 function shuffleArray(arr) {
@@ -46,8 +45,8 @@ function ScorePill({ label, value }) {
 // ════════════════════════════════════════════════════════════════════════════
 // FLASHCARDS
 // ════════════════════════════════════════════════════════════════════════════
-function Flashcards({ onBack }) {
-  const [deck] = useState(() => shuffleArray(VOCAB))
+function Flashcards({ vocab, onBack }) {
+  const [deck] = useState(() => shuffleArray(vocab))
   const [idx, setIdx] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [reviewed, setReviewed] = useState(0)
@@ -138,19 +137,19 @@ function Flashcards({ onBack }) {
 // ════════════════════════════════════════════════════════════════════════════
 // QUIZ
 // ════════════════════════════════════════════════════════════════════════════
-function buildQuizQuestions() {
-  const shuffled = shuffleArray(VOCAB)
+function buildQuizQuestions(vocab) {
+  const shuffled = shuffleArray(vocab)
   return shuffled.map((item) => {
     // pick 3 wrong options from the rest
-    const others = VOCAB.filter((v) => v.word !== item.word)
+    const others = vocab.filter((v) => v.word !== item.word)
     const wrong = shuffleArray(others).slice(0, 3)
     const options = shuffleArray([item, ...wrong])
     return { item, options }
   })
 }
 
-function Quiz({ onBack }) {
-  const [questions] = useState(() => buildQuizQuestions())
+function Quiz({ vocab, onBack }) {
+  const [questions] = useState(() => buildQuizQuestions(vocab))
   const [qIdx, setQIdx] = useState(0)
   const [selected, setSelected] = useState(null)
   const [score, setScore] = useState(0)
@@ -251,10 +250,11 @@ function Quiz({ onBack }) {
 // ════════════════════════════════════════════════════════════════════════════
 // MATCHING GAME
 // ════════════════════════════════════════════════════════════════════════════
-const MATCH_PAIR_COUNT = 8
+const MATCH_PAIR_COUNT = 6
 
-function buildMatchDeck() {
-  const chosen = shuffleArray(VOCAB).slice(0, MATCH_PAIR_COUNT)
+function buildMatchDeck(vocab) {
+  const count = Math.min(MATCH_PAIR_COUNT, vocab.length)
+  const chosen = shuffleArray(vocab).slice(0, count)
   const cards = []
   chosen.forEach((item, i) => {
     cards.push({ id: `w-${i}`, pairId: i, type: 'word',       text: item.word })
@@ -263,8 +263,8 @@ function buildMatchDeck() {
   return shuffleArray(cards)
 }
 
-function MatchingGame({ onBack }) {
-  const [cards, setCards] = useState(() => buildMatchDeck())
+function MatchingGame({ vocab, onBack }) {
+  const [cards, setCards] = useState(() => buildMatchDeck(vocab))
   const [flipped, setFlipped] = useState([])    // ids of currently face-up (unmatched) selection
   const [matched, setMatched] = useState([])    // ids of successfully matched cards
   const [wrong, setWrong]     = useState([])    // ids briefly highlighted wrong
@@ -273,6 +273,8 @@ function MatchingGame({ onBack }) {
   const [running, setRunning] = useState(false)
   const [done, setDone]       = useState(false)
   const timerRef = useRef(null)
+
+  const pairCount = cards.length / 2
 
   // Start timer on first flip
   function ensureTimer() {
@@ -327,7 +329,7 @@ function MatchingGame({ onBack }) {
   function restart() {
     clearInterval(timerRef.current)
     timerRef.current = null
-    setCards(buildMatchDeck())
+    setCards(buildMatchDeck(vocab))
     setFlipped([])
     setMatched([])
     setWrong([])
@@ -370,7 +372,7 @@ function MatchingGame({ onBack }) {
         <div className="vocab-eyebrow">Matching</div>
         <div className="match-meta">
           <span>⏱ {mins}:{secs}</span>
-          <span>🎯 {matchCount}/{MATCH_PAIR_COUNT}</span>
+          <span>🎯 {matchCount}/{pairCount}</span>
         </div>
       </div>
 
@@ -408,29 +410,68 @@ function MatchingGame({ onBack }) {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// VOCAB BUILDER ROOT — activity picker + sub-activity routing
+// VOCAB BUILDER ROOT — language picker + activity routing
 // ════════════════════════════════════════════════════════════════════════════
 export default function VocabBuilder({ onBack }) {
+  // lang: null | 'en' | 'es'
+  const [lang, setLang] = useState(null)
   // activity: null | 'flashcards' | 'quiz' | 'matching'
   const [activity, setActivity] = useState(null)
 
-  if (activity === 'flashcards') return <Flashcards onBack={() => setActivity(null)} />
-  if (activity === 'quiz')       return <Quiz       onBack={() => setActivity(null)} />
-  if (activity === 'matching')   return <MatchingGame onBack={() => setActivity(null)} />
+  const vocab = lang === 'es' ? VOCAB_ES : VOCAB_EN
 
+  if (lang && activity === 'flashcards') return <Flashcards vocab={vocab} onBack={() => setActivity(null)} />
+  if (lang && activity === 'quiz')       return <Quiz       vocab={vocab} onBack={() => setActivity(null)} />
+  if (lang && activity === 'matching')   return <MatchingGame vocab={vocab} onBack={() => setActivity(null)} />
+
+  // Language picker
+  if (!lang) {
+    return (
+      <div className="page-shell">
+        <div className="app-card vocab-picker-card">
+          <button className="back-btn" onClick={onBack}>← Home</button>
+          <div className="icon-badge" style={{ background: 'linear-gradient(135deg, #6366f1 0%, #a78bfa 100%)' }}>📖</div>
+          <h1>Vocabulary Builder</h1>
+          <p className="subtitle">Choose a language to study!</p>
+          <div className="activity-list">
+            <button className="activity-tile" onClick={() => setLang('en')}>
+              <span className="activity-tile-icon">🇺🇸</span>
+              <div className="activity-tile-body">
+                <div className="activity-tile-title">English</div>
+                <div className="activity-tile-desc">{VOCAB_EN.length} words · Spelling &amp; Vocabulary</div>
+              </div>
+              <span className="activity-tile-arrow">›</span>
+            </button>
+            <button className="activity-tile" onClick={() => setLang('es')}>
+              <span className="activity-tile-icon">🇪🇸</span>
+              <div className="activity-tile-body">
+                <div className="activity-tile-title">Español — Unidad 5 Semana 2</div>
+                <div className="activity-tile-desc">{VOCAB_ES.length} palabras · Vocabulario</div>
+              </div>
+              <span className="activity-tile-arrow">›</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Activity picker (after language is chosen)
   return (
     <div className="page-shell">
       <div className="app-card vocab-picker-card">
-        <button className="back-btn" onClick={onBack}>← Home</button>
+        <button className="back-btn" onClick={() => setLang(null)}>← Languages</button>
         <div className="icon-badge" style={{ background: 'linear-gradient(135deg, #6366f1 0%, #a78bfa 100%)' }}>📖</div>
         <h1>Vocabulary Builder</h1>
-        <p className="subtitle">Choose an activity to learn the words!</p>
+        <p className="subtitle">
+          {lang === 'es' ? 'Elige una actividad para aprender las palabras!' : 'Choose an activity to learn the words!'}
+        </p>
         <div className="activity-list">
           <button className="activity-tile" onClick={() => setActivity('flashcards')}>
             <span className="activity-tile-icon">🃏</span>
             <div className="activity-tile-body">
               <div className="activity-tile-title">Flashcards</div>
-              <div className="activity-tile-desc">{VOCAB.length} cards · Tap to reveal the definition</div>
+              <div className="activity-tile-desc">{vocab.length} cards · Tap to reveal the definition</div>
             </div>
             <span className="activity-tile-arrow">›</span>
           </button>
@@ -438,7 +479,7 @@ export default function VocabBuilder({ onBack }) {
             <span className="activity-tile-icon">🧠</span>
             <div className="activity-tile-body">
               <div className="activity-tile-title">Quiz</div>
-              <div className="activity-tile-desc">{VOCAB.length} questions · Pick the right word</div>
+              <div className="activity-tile-desc">{vocab.length} questions · Pick the right word</div>
             </div>
             <span className="activity-tile-arrow">›</span>
           </button>
@@ -446,7 +487,7 @@ export default function VocabBuilder({ onBack }) {
             <span className="activity-tile-icon">🔗</span>
             <div className="activity-tile-body">
               <div className="activity-tile-title">Matching Game</div>
-              <div className="activity-tile-desc">{MATCH_PAIR_COUNT} pairs · Match words to definitions</div>
+              <div className="activity-tile-desc">{Math.min(MATCH_PAIR_COUNT, vocab.length)} pairs · Match words to definitions</div>
             </div>
             <span className="activity-tile-arrow">›</span>
           </button>
