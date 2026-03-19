@@ -59,6 +59,7 @@ function useSpeech(lang) {
         voices.find((v) => v.lang.includes('es'))
       if (spanishVoice) utter.voice = spanishVoice
       utter.lang = 'es-ES'
+      utter.rate = 0.6
     }
 
     utter.onstart  = () => setSpeaking(true)
