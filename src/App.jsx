@@ -135,7 +135,7 @@ function HomeScreen({ onSelectSpelling, onSelectVocab }) {
           </button>
         </div>
       </div>
-      <footer className="w-full text-center text-xs text-gray-400 py-3 mt-auto">made with 🧠 by michael sarduy</footer>
+      <footer className="w-full text-center text-xs text-gray-300 py-8 mt-auto">made with 🧠 by michael sarduy</footer>
     </div>
   )
 }
@@ -294,7 +294,7 @@ export default function App() {
           </div>
           <button className="primary-button" onClick={() => startGame(true)}>{t.startPractice}</button>
         </div>
-        <footer className="w-full text-center text-xs text-gray-400 py-3 mt-auto">made with 🧠 by michael sarduy</footer>
+        <footer className="w-full text-center text-xs text-gray-300 py-8 mt-auto">made with 🧠 by michael sarduy</footer>
       </div>
     )
   }
@@ -333,7 +333,7 @@ export default function App() {
           </div>
           <button className="back-btn" style={{ marginTop: '14px' }} onClick={goHome}>← Home</button>
         </div>
-        <footer className="w-full text-center text-xs text-gray-400 py-3 mt-auto">made with 🧠 by michael sarduy</footer>
+        <footer className="w-full text-center text-xs text-gray-300 py-8 mt-auto">made with 🧠 by michael sarduy</footer>
       </div>
     )
   }
@@ -384,7 +384,8 @@ export default function App() {
           {tries === 0 ? t.triesFirst : t.triesCount(tries + 1)}
         </div>
       </div>
-      <footer className="w-full text-center text-xs text-gray-400 py-3 mt-auto">made with 🧠 by michael sarduy</footer>
+      <footer className="w-full text-center text-xs text-gray-300 py-8 mt-auto">made with 🧠 by michael sarduy</footer>
     </div>
   )
 }
+
