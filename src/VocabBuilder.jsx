@@ -42,16 +42,53 @@ function ScorePill({ label, value }) {
   )
 }
 
+// ── useSpeech: Web Speech API hook ───────────────────────────────────────────
+function useSpeech(lang) {
+  const [speaking, setSpeaking] = useState(false)
+
+  function speak(text) {
+    if (!window.speechSynthesis) return
+    window.speechSynthesis.cancel()
+    const utter = new SpeechSynthesisUtterance(text)
+
+    if (lang === 'es') {
+      // Prefer a Spanish voice; fall back gracefully
+      const voices = window.speechSynthesis.getVoices()
+      const spanishVoice =
+        voices.find((v) => v.lang.startsWith('es')) ||
+        voices.find((v) => v.lang.includes('es'))
+      if (spanishVoice) utter.voice = spanishVoice
+      utter.lang = 'es-ES'
+    }
+
+    utter.onstart  = () => setSpeaking(true)
+    utter.onend    = () => setSpeaking(false)
+    utter.onerror  = () => setSpeaking(false)
+    window.speechSynthesis.speak(utter)
+  }
+
+  function stop() {
+    window.speechSynthesis.cancel()
+    setSpeaking(false)
+  }
+
+  return { speak, stop, speaking }
+}
+
 // ════════════════════════════════════════════════════════════════════════════
 // FLASHCARDS
 // ════════════════════════════════════════════════════════════════════════════
-function Flashcards({ vocab, onBack }) {
+function Flashcards({ vocab, lang, onBack }) {
   const [deck] = useState(() => shuffleArray(vocab))
   const [idx, setIdx] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [reviewed, setReviewed] = useState(0)
+  const { speak, stop, speaking } = useSpeech(lang)
 
   const card = deck[idx]
+
+  // Stop any ongoing speech when card changes
+  useEffect(() => { stop() }, [idx])
 
   function next() {
     if (idx < deck.length - 1) {
@@ -71,6 +108,16 @@ function Flashcards({ vocab, onBack }) {
   function handleFlip() {
     setFlipped((f) => !f)
     if (!flipped && idx + 1 > reviewed) setReviewed(idx + 1)
+  }
+
+  function handleSpeak(e) {
+    e.stopPropagation() // don't flip the card
+    if (speaking) {
+      stop()
+    } else {
+      const text = `${card.word}. ${card.def}`
+      speak(text)
+    }
   }
 
   const progress = ((idx + 1) / deck.length) * 100
@@ -107,6 +154,38 @@ function Flashcards({ vocab, onBack }) {
           </div>
         </div>
       </div>
+
+      {/* TTS button — only shown for Spanish mode */}
+      {lang === 'es' && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '14px' }}>
+          <button
+            className={`tts-btn${speaking ? ' tts-btn-speaking' : ''}`}
+            onClick={handleSpeak}
+            aria-label={speaking ? 'Stop audio' : 'Listen to word and definition'}
+            title={speaking ? 'Stop' : 'Listen'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 22px',
+              borderRadius: '999px',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '15px',
+              fontWeight: '600',
+              background: speaking
+                ? 'linear-gradient(135deg, #f43f5e 0%, #fb7185 100%)'
+                : 'linear-gradient(135deg, #6366f1 0%, #a78bfa 100%)',
+              color: '#fff',
+              boxShadow: '0 2px 8px rgba(99,102,241,0.35)',
+              transition: 'background 0.2s, transform 0.1s',
+            }}
+          >
+            <span style={{ fontSize: '18px' }}>{speaking ? '⏹' : '🔊'}</span>
+            {speaking ? 'Detener' : 'Escuchar'}
+          </button>
+        </div>
+      )}
 
       <div className="fc-nav">
         <button
@@ -249,7 +328,7 @@ function Quiz({ vocab, onBack }) {
 
 // ════════════════════════════════════════════════════════════════════════════
 // MATCHING GAME
-// ════════════════════════════════════════════════════════════════════════════
+// ═════════════════════════════════════════════════════════════════════��══════
 const MATCH_PAIR_COUNT = 6
 
 function buildMatchDeck(vocab) {
@@ -420,7 +499,7 @@ export default function VocabBuilder({ onBack }) {
 
   const vocab = lang === 'es' ? VOCAB_ES : VOCAB_EN
 
-  if (lang && activity === 'flashcards') return <Flashcards vocab={vocab} onBack={() => setActivity(null)} />
+  if (lang && activity === 'flashcards') return <Flashcards vocab={vocab} lang={lang} onBack={() => setActivity(null)} />
   if (lang && activity === 'quiz')       return <Quiz       vocab={vocab} onBack={() => setActivity(null)} />
   if (lang && activity === 'matching')   return <MatchingGame vocab={vocab} onBack={() => setActivity(null)} />
 
