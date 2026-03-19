@@ -42,38 +42,92 @@ function ScorePill({ label, value }) {
   )
 }
 
-// ── useSpeech: Web Speech API hook ───────────────────────────────────────────
-function useSpeech(lang) {
-  const [speaking, setSpeaking] = useState(false)
+// ── ElevenLabs voice ID for Spanish ──────────────────────────────────────────
+// Using the "Bella" multilingual voice (supports Spanish natively)
+const ELEVENLABS_API_KEY = 'sk_715e7b031ffb11753f47e5f5a63afe43534c4288ca1c1c3f'
+const ELEVENLABS_VOICE_ID = 'EXAVITQu4vr4xnSDxMaL' // Bella — multilingual, clear Spanish
 
-  function speak(text) {
+// ── useSpeech: ElevenLabs TTS hook (Spanish) / Web Speech API (English) ──────
+function useSpeech(lang) {
+  const [speaking, setSpeaking]   = useState(false)
+  const [loading, setLoading]     = useState(false)
+  const audioRef                  = useRef(null)
+
+  function stopAudio() {
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+      audioRef.current = null
+    }
+    setSpeaking(false)
+    setLoading(false)
+  }
+
+  async function speakElevenLabs(text) {
+    stopAudio()
+    setLoading(true)
+    try {
+      const response = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`,
+        {
+          method: 'POST',
+          headers: {
+            'xi-api-key': ELEVENLABS_API_KEY,
+            'Content-Type': 'application/json',
+            'Accept': 'audio/mpeg',
+          },
+          body: JSON.stringify({
+            text,
+            model_id: 'eleven_multilingual_v2',
+            voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+          }),
+        }
+      )
+      if (!response.ok) throw new Error(`ElevenLabs error: ${response.status}`)
+      const blob = await response.blob()
+      const url  = URL.createObjectURL(blob)
+      const audio = new Audio(url)
+      audioRef.current = audio
+      audio.onended = () => { setSpeaking(false); URL.revokeObjectURL(url) }
+      audio.onerror = () => { setSpeaking(false); URL.revokeObjectURL(url) }
+      setLoading(false)
+      setSpeaking(true)
+      await audio.play()
+    } catch (err) {
+      console.error('ElevenLabs TTS failed:', err)
+      setLoading(false)
+      setSpeaking(false)
+    }
+  }
+
+  function speakWebSpeech(text) {
     if (!window.speechSynthesis) return
     window.speechSynthesis.cancel()
     const utter = new SpeechSynthesisUtterance(text)
-
-    if (lang === 'es') {
-      // Prefer a Spanish voice; fall back gracefully
-      const voices = window.speechSynthesis.getVoices()
-      const spanishVoice =
-        voices.find((v) => v.lang.startsWith('es')) ||
-        voices.find((v) => v.lang.includes('es'))
-      if (spanishVoice) utter.voice = spanishVoice
-      utter.lang = 'es-ES'
-      utter.rate = 0.6
-    }
-
-    utter.onstart  = () => setSpeaking(true)
-    utter.onend    = () => setSpeaking(false)
-    utter.onerror  = () => setSpeaking(false)
+    utter.onstart = () => setSpeaking(true)
+    utter.onend   = () => setSpeaking(false)
+    utter.onerror = () => setSpeaking(false)
     window.speechSynthesis.speak(utter)
   }
 
-  function stop() {
-    window.speechSynthesis.cancel()
-    setSpeaking(false)
+  function speak(text) {
+    if (lang === 'es') {
+      speakElevenLabs(text)
+    } else {
+      speakWebSpeech(text)
+    }
   }
 
-  return { speak, stop, speaking }
+  function stop() {
+    if (lang === 'es') {
+      stopAudio()
+    } else {
+      if (window.speechSynthesis) window.speechSynthesis.cancel()
+      setSpeaking(false)
+    }
+  }
+
+  return { speak, stop, speaking, loading }
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -84,7 +138,7 @@ function Flashcards({ vocab, lang, onBack }) {
   const [idx, setIdx] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [reviewed, setReviewed] = useState(0)
-  const { speak, stop, speaking } = useSpeech(lang)
+  const { speak, stop, speaking, loading } = useSpeech(lang)
 
   const card = deck[idx]
 
@@ -162,8 +216,9 @@ function Flashcards({ vocab, lang, onBack }) {
           <button
             className={`tts-btn${speaking ? ' tts-btn-speaking' : ''}`}
             onClick={handleSpeak}
-            aria-label={speaking ? 'Stop audio' : 'Listen to word and definition'}
-            title={speaking ? 'Stop' : 'Listen'}
+            disabled={loading}
+            aria-label={speaking ? 'Stop audio' : loading ? 'Loading audio…' : 'Listen to word and definition'}
+            title={speaking ? 'Stop' : loading ? 'Loading…' : 'Listen'}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -171,19 +226,23 @@ function Flashcards({ vocab, lang, onBack }) {
               padding: '10px 22px',
               borderRadius: '999px',
               border: 'none',
-              cursor: 'pointer',
+              cursor: loading ? 'wait' : 'pointer',
               fontSize: '15px',
               fontWeight: '600',
               background: speaking
                 ? 'linear-gradient(135deg, #f43f5e 0%, #fb7185 100%)'
+                : loading
+                ? 'linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%)'
                 : 'linear-gradient(135deg, #6366f1 0%, #a78bfa 100%)',
               color: '#fff',
               boxShadow: '0 2px 8px rgba(99,102,241,0.35)',
               transition: 'background 0.2s, transform 0.1s',
             }}
           >
-            <span style={{ fontSize: '18px' }}>{speaking ? '⏹' : '🔊'}</span>
-            {speaking ? 'Detener' : 'Escuchar'}
+            <span style={{ fontSize: '18px' }}>
+              {loading ? '⏳' : speaking ? '⏹' : '🔊'}
+            </span>
+            {loading ? 'Cargando…' : speaking ? 'Detener' : 'Escuchar'}
           </button>
         </div>
       )}
@@ -329,7 +388,7 @@ function Quiz({ vocab, onBack }) {
 
 // ════════════════════════════════════════════════════════════════════════════
 // MATCHING GAME
-// ═════════════════════════════════════════════════════════════════════��══════
+// ════════════════════════════════════════════════════════════════════════════
 const MATCH_PAIR_COUNT = 6
 
 function buildMatchDeck(vocab) {
