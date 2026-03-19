@@ -269,7 +269,7 @@ function Flashcards({ vocab, lang, onBack }) {
           🎉 You've gone through all {deck.length} cards!
         </div>
       )}
-      <footer className="w-full text-center text-xs text-gray-300 py-8 mt-auto">made with 🧠 by michael sarduy</footer>
+      <footer className="w-full text-center text-xs text-gray-200 mt-12 pb-12">made with 🧠 by michael sarduy</footer>
     </div>
   )
 }
@@ -333,7 +333,7 @@ function Quiz({ vocab, onBack }) {
             <button className="secondary-button" onClick={onBack}>← Back</button>
           </div>
         </div>
-        <footer className="w-full text-center text-xs text-gray-300 py-8 mt-auto">made with 🧠 by michael sarduy</footer>
+        <footer className="w-full text-center text-xs text-gray-200 mt-12 pb-12">made with 🧠 by michael sarduy</footer>
       </div>
     )
   }
@@ -384,7 +384,7 @@ function Quiz({ vocab, onBack }) {
           </button>
         )}
       </div>
-      <footer className="w-full text-center text-xs text-gray-300 py-8 mt-auto">made with 🧠 by michael sarduy</footer>
+      <footer className="w-full text-center text-xs text-gray-200 mt-12 pb-12">made with 🧠 by michael sarduy</footer>
     </div>
   )
 }
@@ -503,7 +503,7 @@ function MatchingGame({ vocab, onBack }) {
             <button className="secondary-button" onClick={onBack}>← Back</button>
           </div>
         </div>
-        <footer className="w-full text-center text-xs text-gray-300 py-8 mt-auto">made with 🧠 by michael sarduy</footer>
+        <footer className="w-full text-center text-xs text-gray-200 mt-12 pb-12">made with 🧠 by michael sarduy</footer>
       </div>
     )
   }
@@ -548,7 +548,7 @@ function MatchingGame({ vocab, onBack }) {
           )
         })}
       </div>
-      <footer className="w-full text-center text-xs text-gray-300 py-8 mt-auto">made with 🧠 by michael sarduy</footer>
+      <footer className="w-full text-center text-xs text-gray-200 mt-12 pb-12">made with 🧠 by michael sarduy</footer>
     </div>
   )
 }
@@ -596,7 +596,7 @@ export default function VocabBuilder({ onBack }) {
             </button>
           </div>
         </div>
-        <footer className="w-full text-center text-xs text-gray-300 py-8 mt-auto">made with 🧠 by michael sarduy</footer>
+        <footer className="w-full text-center text-xs text-gray-200 mt-12 pb-12">made with 🧠 by michael sarduy</footer>
       </div>
     )
   }
@@ -638,7 +638,7 @@ export default function VocabBuilder({ onBack }) {
           </button>
         </div>
       </div>
-      <footer className="w-full text-center text-xs text-gray-300 py-8 mt-auto">made with 🧠 by michael sarduy</footer>
+      <footer className="w-full text-center text-xs text-gray-200 mt-12 pb-12">made with 🧠 by michael sarduy</footer>
     </div>
   )
 }
