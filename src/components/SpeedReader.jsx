@@ -13,7 +13,7 @@ function chunkArray(words, size) {
 const SAMPLE_PASSAGES = [
   {
     label: '🦁 The Lion and the Mouse',
-    text: 'Once upon a time a lion was sleeping in the jungle. A little mouse ran across his paw and woke him up. The lion was very angry and grabbed the mouse. The mouse begged the lion to let him go and promised to help him one day. The lion laughed but let him go. Later the lion got trapped in a hunter's net. He roared loudly. The little mouse heard him and came running. The mouse chewed through the ropes and set the lion free. Even the smallest friend can be a great help.',
+    text: "Once upon a time a lion was sleeping in the jungle. A little mouse ran across his paw and woke him up. The lion was very angry and grabbed the mouse. The mouse begged the lion to let him go and promised to help him one day. The lion laughed but let him go. Later the lion got trapped in a hunter's net. He roared loudly. The little mouse heard him and came running. The mouse chewed through the ropes and set the lion free. Even the smallest friend can be a great help.",
   },
   {
     label: '🚀 Space Explorers',
@@ -466,3 +466,4 @@ export default function SpeedReader({ onBack }) {
     </div>
   )
 }
+
