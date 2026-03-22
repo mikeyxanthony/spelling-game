@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import VocabBuilder from './VocabBuilder.jsx'
+import SpeedReader from './components/SpeedReader.jsx'
 
 const WORDS_EN = [
   'Citizenship', 'Continued', 'Daring', 'Horrified', 'Participate',
@@ -115,7 +116,7 @@ function ScorePill({ label, value }) {
 }
 
 // ── Home / Mode-selection screen ─────────────────────────────────────────────
-function HomeScreen({ onSelectSpelling, onSelectVocab }) {
+function HomeScreen({ onSelectSpelling, onSelectVocab, onSelectSpeedReader }) {
   return (
     <div className="page-shell">
       <div className="app-card home-card">
@@ -133,6 +134,11 @@ function HomeScreen({ onSelectSpelling, onSelectVocab }) {
             <span className="mode-tile-title">Vocabulary Builder</span>
             <span className="mode-tile-desc">Learn what the words mean</span>
           </button>
+          <button className="mode-tile" onClick={onSelectSpeedReader}>
+            <span className="mode-tile-icon">⚡</span>
+            <span className="mode-tile-title">Speed Reader</span>
+            <span className="mode-tile-desc">Train your brain to read faster</span>
+          </button>
         </div>
       </div>
       <footer className="w-full text-center text-xs text-gray-200 mt-12 pb-12">made with 🧠 by michael sarduy</footer>
@@ -141,7 +147,7 @@ function HomeScreen({ onSelectSpelling, onSelectVocab }) {
 }
 
 export default function App() {
-  // top-level mode: 'home' | 'spelling' | 'vocab'
+  // top-level mode: 'home' | 'spelling' | 'vocab' | 'speedreader'
   const [mode, setMode] = useState('home')
 
   const [locale, setLocale] = useState('en')
@@ -264,8 +270,14 @@ export default function App() {
       <HomeScreen
         onSelectSpelling={() => setMode('spelling')}
         onSelectVocab={() => setMode('vocab')}
+        onSelectSpeedReader={() => setMode('speedreader')}
       />
     )
+  }
+
+  // ── SPEED READER MODE ────────────────────────────────────────────────────
+  if (mode === 'speedreader') {
+    return <SpeedReader onBack={goHome} />
   }
 
   // ── VOCAB MODE ───────────────────────────────────────────────────────────
@@ -388,4 +400,3 @@ export default function App() {
     </div>
   )
 }
-
