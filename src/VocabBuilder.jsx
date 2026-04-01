@@ -2,14 +2,26 @@ import { useEffect, useRef, useState } from 'react'
 
 // ── English vocabulary word list ──────────────────────────────────────────────
 export const VOCAB_EN = [
-  { word: 'Citizenship',  def: 'The position of being a citizen of a country with all of the rights that come with it.' },
-  { word: 'Continued',    def: 'Goes on without stopping.' },
-  { word: 'Daring',       def: 'Courageous and bold.' },
-  { word: 'Horrified',    def: 'Filled with great fear, horror, and dislike.' },
-  { word: 'Participate',  def: 'Join with others or take part in something.' },
-  { word: 'Proposed',     def: 'Suggested something to others for consideration.' },
-  { word: 'Unfairness',   def: 'State of being unfair or unjust.' },
-  { word: 'Waver',        def: 'To pause when being unsure.' },
+  { word: 'basket', def: '' },
+  { word: 'rabbit', def: '' },
+  { word: 'lesson', def: '' },
+  { word: 'letter', def: '' },
+  { word: 'invite', def: '' },
+  { word: 'bedtime', def: '' },
+  { word: 'mammal', def: '' },
+  { word: 'number', def: '' },
+  { word: 'fellow', def: '' },
+  { word: 'chapter', def: '' },
+  { word: 'follow', def: '' },
+  { word: 'problem', def: '' },
+  { word: 'chicken', def: '' },
+  { word: 'butter', def: '' },
+  { word: 'napkin', def: '' },
+  { word: 'hoping', def: '' },
+  { word: 'dances', def: '' },
+  { word: 'dropped', def: '' },
+  { word: 'suppose', def: '' },
+  { word: 'stubborn', def: '' },
 ]
 
 // ── Spanish vocabulary word list (Unidad 5 Semana 2) ─────────────────────────
@@ -391,7 +403,7 @@ function Quiz({ vocab, onBack }) {
 
 // ════════════════════════════════════════════════════════════════════════════
 // MATCHING GAME
-// ════════════════════════════════════════════════════════════════════════════
+// ═════════════════════════════��══════════════════════════════════════════════
 const MATCH_PAIR_COUNT = 6
 
 function buildMatchDeck(vocab) {
