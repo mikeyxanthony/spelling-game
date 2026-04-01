@@ -98,6 +98,8 @@ function maskedWord(word) {
   return word.replace(/[\p{L}]/gu, '_')
 }
 
+const audioRef = { current: null }
+
 function stopAudio() {
   if (audioRef.current) {
     audioRef.current.pause()
@@ -201,7 +203,6 @@ export default function App() {
   const [feedback, setFeedback] = useState(null)
   const [results, setResults] = useState([])
   const inputRef = useRef(null)
-  const audioRef = useRef(null)
 
   const currentWord = order[index]
   const finished = started && index >= order.length
