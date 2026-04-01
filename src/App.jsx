@@ -3,13 +3,15 @@ import VocabBuilder from './VocabBuilder.jsx'
 import SpeedReader from './components/SpeedReader.jsx'
 
 const WORDS_EN = [
-  'Citizenship', 'Continued', 'Daring', 'Horrified', 'Participate',
-  'Proposed', 'Unfairness', 'Waver',
+  'basket', 'rabbit', 'lesson', 'letter', 'invite',
+  'bedtime', 'mammal', 'number', 'fellow', 'chapter',
+  'follow', 'problem', 'chicken', 'butter', 'napkin',
+  'hoping', 'dances', 'dropped', 'suppose', 'stubborn',
 ]
 
 const WORDS_ES = [
-  'Antepasado', 'Arder', 'Envejecer', 'Oficio', 'Oxidado',
-  'Reciclar', 'Serrar',
+  'rabino', 'margen', 'oveja', 'espuma', 'tijeras',
+  'taza', 'crisis', 'palomitas', 'cueva', 'calor',
 ]
 
 const UI = {
@@ -96,14 +98,50 @@ function maskedWord(word) {
   return word.replace(/[\p{L}]/gu, '_')
 }
 
-function speak(text, lang) {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return
-  const utterance = new SpeechSynthesisUtterance(text)
-  utterance.rate = 0.78
-  utterance.pitch = 1
-  utterance.lang = lang
-  window.speechSynthesis.cancel()
-  window.speechSynthesis.speak(utterance)
+function stopAudio() {
+  if (audioRef.current) {
+    audioRef.current.pause()
+    audioRef.current.currentTime = 0
+    audioRef.current = null
+  }
+}
+
+async function speak(text, lang) {
+  if (typeof window === 'undefined' || !text) return
+
+  stopAudio()
+
+  try {
+    const response = await fetch('/api/speak', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ word: text, lang }),
+    })
+
+    if (!response.ok) throw new Error('Audio request failed: ' + response.status)
+
+    const blob = await response.blob()
+    const url = URL.createObjectURL(blob)
+    const audio = new Audio(url)
+    audioRef.current = audio
+    audio.onended = () => {
+      if (audioRef.current === audio) audioRef.current = null
+      URL.revokeObjectURL(url)
+    }
+    audio.onerror = () => {
+      if (audioRef.current === audio) audioRef.current = null
+      URL.revokeObjectURL(url)
+    }
+    await audio.play()
+  } catch (error) {
+    console.error('ElevenLabs audio failed:', error)
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.rate = 0.78
+    utterance.pitch = 1
+    utterance.lang = lang
+    window.speechSynthesis?.cancel()
+    window.speechSynthesis?.speak(utterance)
+  }
 }
 
 function ScorePill({ label, value }) {
@@ -163,6 +201,7 @@ export default function App() {
   const [feedback, setFeedback] = useState(null)
   const [results, setResults] = useState([])
   const inputRef = useRef(null)
+  const audioRef = useRef(null)
 
   const currentWord = order[index]
   const finished = started && index >= order.length
@@ -182,6 +221,7 @@ export default function App() {
   }, [started, finished, currentWord])
 
   function goHome() {
+    stopAudio()
     setMode('home')
     setStarted(false)
     setIndex(0)
@@ -193,6 +233,7 @@ export default function App() {
   }
 
   function toggleLocale() {
+    stopAudio()
     const next = locale === 'en' ? 'es' : 'en'
     const nextWords = next === 'en' ? WORDS_EN : WORDS_ES
     setLocale(next)
@@ -207,6 +248,7 @@ export default function App() {
   }
 
   function startGame(shuffle = true) {
+    stopAudio()
     setOrder(shuffle ? shuffleArray(WORDS) : [...WORDS])
     setStarted(true)
     setIndex(0)
